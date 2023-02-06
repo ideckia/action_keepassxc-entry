@@ -16,8 +16,7 @@ When the action is initialized, it will get the entry content and will keep it i
 | entry_name | String | The name of the entry to retrieve | false | null | null |
 | key_after_user | String | Writes 'username'->key_after_user->'password'->'enter' | false | 'tab' | [tab,enter] |
 | user_pass_delay | UInt | Milliseconds to wait between username and password | false | 0 | null |
-| cache_on_init | Bool | Cache KeePassXC response in memory on initialization. | false | true | null |
-| ask_keepass_password_every_time | Bool | Ask for KeePassXC password every time. | false | false | null |
+| cache_response | Bool | Cache KeePassXC response in memory on retrieve. | false | true | null |
 
 ## On single click
 
@@ -49,8 +48,7 @@ node test_action.js
                     "entry_name": "my_keepassxc_entry",
                     "key_after_user": "tab",
                     "user_pass_delay": 0,
-                    "cache_on_init": true,
-                    "ask_keepass_password_every_time": false
+                    "cache_response": true
                 }
             }
         ]

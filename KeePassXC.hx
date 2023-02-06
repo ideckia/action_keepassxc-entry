@@ -14,10 +14,8 @@ typedef Props = {
 	var key_after_user:String;
 	@:editable("Milliseconds to wait between username and password", 0)
 	var user_pass_delay:UInt;
-	@:editable("Cache KeePassXC response in memory on initialization.", true)
-	var cache_on_init:Bool;
-	@:editable("Ask for KeePassXC password every time.", false)
-	var ask_keepass_password_every_time:Bool;
+	@:editable("Cache KeePassXC response in memory on retrieve.", true)
+	var cache_response:Bool;
 }
 
 @:name("keepassxc")
@@ -26,14 +24,6 @@ class KeePassXC extends IdeckiaAction {
 	static var cached_keepassxc_password:Map<String, String> = [];
 
 	var actionLogin:ActionLogin;
-
-	override public function init(initialState:ItemState):js.lib.Promise<ItemState> {
-		if (props.cache_on_init) {
-			loadEntry(initialState).catchError(error -> server.log.error('Error getting [${props.entry_name}] entry: $error'));
-		}
-
-		return super.init(initialState);
-	}
 
 	public function execute(currentState:ItemState):js.lib.Promise<ItemState> {
 		return new js.lib.Promise((resolve, reject) -> {
@@ -49,7 +39,7 @@ class KeePassXC extends IdeckiaAction {
 
 	function loadEntry(currentState:ItemState):js.lib.Promise<ActionLogin> {
 		return new Promise<ActionLogin>((resolve, reject) -> {
-			if (!props.ask_keepass_password_every_time && actionLogin != null) {
+			if (props.cache_response && actionLogin != null) {
 				resolve(actionLogin);
 				return;
 			}
@@ -116,11 +106,13 @@ class KeePassXC extends IdeckiaAction {
 
 	function getKeePassXCPassword() {
 		return new js.lib.Promise((resolve, reject) -> {
-			if (!props.ask_keepass_password_every_time && cached_keepassxc_password.exists(props.database_path)) {
+			if (props.cache_response && cached_keepassxc_password.exists(props.database_path)) {
 				resolve(cached_keepassxc_password.get(props.database_path));
 				return;
 			}
-			server.dialog.password('KeePassXC [${props.database_path}] file password', 'Write the KeePassXC [${props.database_path}] file password, please')
+
+			server.dialog.password('KeePassXC [${haxe.io.Path.withoutDirectory(props.database_path)}] file password',
+				'Write the KeePassXC [${props.database_path}] file password, please')
 				.then(resp -> {
 					switch resp {
 						case Some(v):
