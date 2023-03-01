@@ -27,7 +27,8 @@ class KeePassXC extends IdeckiaAction {
 
 	public function execute(currentState:ItemState):js.lib.Promise<ItemState> {
 		return new js.lib.Promise((resolve, reject) -> {
-			loadEntry(currentState).then(actionLogin -> actionLogin.execute(currentState).then(s -> resolve(s)).catchError(e -> reject(e)));
+			loadEntry(currentState).then(actionLogin -> actionLogin.execute(currentState).then(s -> resolve(s)).catchError(e -> reject(e)))
+				.catchError(e -> reject(e));
 		});
 	}
 
@@ -63,7 +64,7 @@ class KeePassXC extends IdeckiaAction {
 				cp.stdout.on('end', d -> {
 					var lineBreakEreg = ~/\r?\n/g;
 					var cleanData = lineBreakEreg.replace(data, '');
-					if (error != '' || cleanData.length == 0)
+					if (cleanData.length == 0)
 						reject(error);
 					else {
 						var cleanArray = lineBreakEreg.split(data);
