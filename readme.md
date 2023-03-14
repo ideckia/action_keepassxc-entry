@@ -1,8 +1,8 @@
-# Action for [ideckia](https://ideckia.github.io/): keepassxc
+# Action for [ideckia](https://ideckia.github.io/): keepassxc-entry
 
 ## Description
 
-Get entries from [KeePassXC](https://keepassxc.org/) application.
+Get an entry from [KeePassXC](https://keepassxc.org/) application.
 
 Action ['action_log-in'](http://github.com/ideckia/action_log-in) is required.
 
@@ -42,7 +42,7 @@ node test_action.js
         "text": "keepassxc action example",
         "actions": [
             {
-                "name": "keepassxc",
+                "name": "keepassxc-entry",
                 "props": {
                     "database_path": "/path/to/database.kdbx",
                     "entry_name": "my_keepassxc_entry",

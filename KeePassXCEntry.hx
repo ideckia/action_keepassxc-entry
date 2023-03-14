@@ -8,6 +8,7 @@ typedef Props = {
 	@:editable("The path to the database")
 	@:shared
 	var database_path:String;
+	var database_password:String;
 	@:editable("The name of the entry to retrieve")
 	var entry_name:String;
 	@:editable("Writes 'username'->key_after_user->'password'->'enter'", 'tab', ['tab', 'enter'])
@@ -18,14 +19,22 @@ typedef Props = {
 	var cache_response:Bool;
 }
 
-@:name("keepassxc")
-@:description("Get entries from keepassxc application")
-class KeePassXC extends IdeckiaAction {
+@:name("keepassxc-entry")
+@:description("Get an entry from keepassxc application")
+class KeePassXCEntry extends IdeckiaAction {
 	static var cached_keepassxc_password:Map<String, String> = [];
 
 	var actionLogin:ActionLogin;
 
+	override function init(initialState:ItemState):js.lib.Promise<ItemState> {
+		if (props.database_password != null)
+			cached_keepassxc_password.set(props.database_path, props.database_password);
+
+		return super.init(initialState);
+	}
+
 	public function execute(currentState:ItemState):js.lib.Promise<ItemState> {
+		server.log.debug('executing ${props.entry_name}');
 		return new js.lib.Promise((resolve, reject) -> {
 			loadEntry(currentState).then(actionLogin -> actionLogin.execute(currentState).then(s -> resolve(s)).catchError(e -> reject(e)))
 				.catchError(e -> reject(e));
@@ -40,6 +49,7 @@ class KeePassXC extends IdeckiaAction {
 
 	function loadEntry(currentState:ItemState):js.lib.Promise<ActionLogin> {
 		return new Promise<ActionLogin>((resolve, reject) -> {
+			server.log.debug('loadEntry ${props.entry_name}');
 			if (props.cache_response && actionLogin != null) {
 				resolve(actionLogin);
 				return;
@@ -74,7 +84,7 @@ class KeePassXC extends IdeckiaAction {
 							{username: cleanArray[0], password: cleanArray[1]}
 						};
 
-						server.log.debug('Got [${props.entry_name}] entry correctly. [$userPass]');
+						server.log.debug('Got [${props.entry_name}] entry correctly.');
 						try {
 							actionLogin = new ActionLogin();
 							actionLogin.setup({
@@ -87,7 +97,7 @@ class KeePassXC extends IdeckiaAction {
 
 							resolve(actionLogin);
 						} catch (e:Any) {
-							server.dialog.error('KeePassXC action',
+							server.dialog.error('KeePassXCEntry action',
 								'Could not load the action "log-in" from actions folder. You can download it from https://github.com/ideckia/action_log-in/releases/tag/v1.0.0');
 						}
 					}
@@ -112,7 +122,7 @@ class KeePassXC extends IdeckiaAction {
 				return;
 			}
 
-			server.dialog.password('KeePassXC [${haxe.io.Path.withoutDirectory(props.database_path)}] file password',
+			server.dialog.password('KeePassXCEntry [${haxe.io.Path.withoutDirectory(props.database_path)}] file password',
 				'Write the KeePassXC [${props.database_path}] file password, please')
 				.then(resp -> {
 					switch resp {

@@ -2,6 +2,6 @@
 --library ideckia_api
 --dce full
 -D js-es=6
-KeePassXC
+KeePassXCEntry
 
 --js index.js

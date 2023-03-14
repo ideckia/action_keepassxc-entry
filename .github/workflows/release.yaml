@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      CMD_NAME: keepassxc
+      CMD_NAME: keepassxc-entry
       HAXE_VERSION: latest
       NODE_VERSION: 16
 
