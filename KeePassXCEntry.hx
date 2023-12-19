@@ -6,7 +6,7 @@ using api.IdeckiaApi;
 
 typedef Props = {
 	@:editable("The path to the database")
-	@:shared
+	@:shared('keepassxc.database_path')
 	var database_path:String;
 	var database_password:String;
 	@:editable("The name of the entry to retrieve")
@@ -33,7 +33,7 @@ class KeePassXCEntry extends IdeckiaAction {
 		return super.init(initialState);
 	}
 
-	public function execute(currentState:ItemState):js.lib.Promise<ItemState> {
+	public function execute(currentState:ItemState):js.lib.Promise<ActionOutcome> {
 		server.log.debug('executing ${props.entry_name}');
 		return new js.lib.Promise((resolve, reject) -> {
 			loadEntry(currentState).then(actionLogin -> actionLogin.execute(currentState).then(s -> resolve(s)).catchError(e -> reject(e)))
@@ -41,7 +41,7 @@ class KeePassXCEntry extends IdeckiaAction {
 		});
 	}
 
-	override public function onLongPress(currentState:ItemState):js.lib.Promise<ItemState> {
+	override public function onLongPress(currentState:ItemState):js.lib.Promise<ActionOutcome> {
 		actionLogin = null;
 		cached_keepassxc_password.remove(props.database_path);
 		return execute(currentState);
