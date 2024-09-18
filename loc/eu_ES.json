@@ -1,0 +1,42 @@
+[
+	{
+		"id": "action_description",
+		"text": "KeepassXC aplikazioko sarrera bat lortu"
+	},
+	{
+		"id": "prop_database_path",
+		"text": "Datu-baserako bidea."
+	},
+	{
+		"id": "prop_entry_name",
+		"text": "Hartu beharreko sarreraren izena."
+	},
+	{
+		"id": "prop_key_after_user",
+		"text": "Hau idatziko da: 'erabiltzailea'->key_after_user->'pasahitza'->'enter'."
+	},
+	{
+		"id": "prop_user_pass_delay",
+		"text": "Erabiltzailea eta pasahitzaren artean itxaroteko milisegundo kopurua."
+	},
+	{
+		"id": "prop_cache_response",
+		"text": "KeePassXC-ren erantzuna memorian gorde."
+	},
+	{
+		"id": "error_title",
+		"text": "KeePassXCEntry errorea"
+	},
+	{
+		"id": "error_body",
+		"text": "Ezin izan da [log-in] ekitzan kargatu. Hemendik deskarga dezakezu https://github.com/ideckia/action_log-in/releases"
+	},
+	{
+		"id": "write_password_title",
+		"text": "KeepassXC fitxategiaren pasahitza"
+	},
+	{
+		"id": "write_password_body",
+		"text": "Idatzi KeePassXC [{0}] fitxategiaren pasahitza, faborez"
+	}
+]

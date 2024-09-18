@@ -1,0 +1,42 @@
+[
+	{
+		"id": "action_description",
+		"text": "Get an entry from keepassxc application"
+	},
+	{
+		"id": "prop_database_path",
+		"text": "The path to the database."
+	},
+	{
+		"id": "prop_entry_name",
+		"text": "The name of the entry to retrieve."
+	},
+	{
+		"id": "prop_key_after_user",
+		"text": "Writes 'username'->key_after_user->'password'->'enter'."
+	},
+	{
+		"id": "prop_user_pass_delay",
+		"text": "Milliseconds to wait between username and password."
+	},
+	{
+		"id": "prop_cache_response",
+		"text": "Cache KeePassXC response in memory on retrieve."
+	},
+	{
+		"id": "error_title",
+		"text": "KeePassXCEntry errorea"
+	},
+	{
+		"id": "error_body",
+		"text": "Could not load the action [log-in] from actions folder. You can download it from https://github.com/ideckia/action_log-in/releases"
+	},
+	{
+		"id": "write_password_title",
+		"text": "KeepassXC file password"
+	},
+	{
+		"id": "write_password_body",
+		"text": "Write the KeePassXC [{0}] file password, please"
+	}
+]

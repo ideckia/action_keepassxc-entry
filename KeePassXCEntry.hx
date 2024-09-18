@@ -1,26 +1,25 @@
 package;
 
-import haxe.ds.Option;
-
 using api.IdeckiaApi;
 
 typedef Props = {
-	@:editable("The path to the database")
 	@:shared('keepassxc.database_path')
+	@:editable("prop_database_path")
 	var database_path:String;
 	var database_password:String;
-	@:editable("The name of the entry to retrieve")
+	@:editable("prop_entry_name")
 	var entry_name:String;
-	@:editable("Writes 'username'->key_after_user->'password'->'enter'", 'tab', ['tab', 'enter'])
+	@:editable("prop_key_after_user", 'tab', ['tab', 'enter'])
 	var key_after_user:String;
-	@:editable("Milliseconds to wait between username and password", 0)
+	@:editable("prop_user_pass_delay", 0)
 	var user_pass_delay:UInt;
-	@:editable("Cache KeePassXC response in memory on retrieve.", true)
+	@:editable("prop_cache_response", true)
 	var cache_response:Bool;
 }
 
 @:name("keepassxc-entry")
-@:description("Get an entry from keepassxc application")
+@:description("action_description")
+@:localize
 class KeePassXCEntry extends IdeckiaAction {
 	static var cached_keepassxc_password:Map<String, String> = [];
 
@@ -34,7 +33,7 @@ class KeePassXCEntry extends IdeckiaAction {
 	}
 
 	public function execute(currentState:ItemState):js.lib.Promise<ActionOutcome> {
-		server.log.debug('executing ${props.entry_name}');
+		core.log.debug('executing ${props.entry_name}');
 		return new js.lib.Promise((resolve, reject) -> {
 			loadEntry(currentState).then(actionLogin -> actionLogin.execute(currentState).then(s -> resolve(s)).catchError(e -> reject(e)))
 				.catchError(e -> reject(e));
@@ -49,7 +48,7 @@ class KeePassXCEntry extends IdeckiaAction {
 
 	function loadEntry(currentState:ItemState):js.lib.Promise<ActionLogin> {
 		return new Promise<ActionLogin>((resolve, reject) -> {
-			server.log.debug('loadEntry ${props.entry_name}');
+			core.log.debug('loadEntry ${props.entry_name}');
 			if (props.cache_response && actionLogin != null) {
 				resolve(actionLogin);
 				return;
@@ -84,7 +83,7 @@ class KeePassXCEntry extends IdeckiaAction {
 							{username: cleanArray[0], password: cleanArray[1]}
 						};
 
-						server.log.debug('Got [${props.entry_name}] entry correctly.');
+						core.log.debug('Got [${props.entry_name}] entry correctly.');
 						try {
 							actionLogin = new ActionLogin();
 							actionLogin.setup({
@@ -92,13 +91,12 @@ class KeePassXCEntry extends IdeckiaAction {
 								password: userPass.password,
 								key_after_user: props.key_after_user,
 								user_pass_delay: props.user_pass_delay,
-							}, server);
+							}, core);
 							actionLogin.init(currentState);
 
 							resolve(actionLogin);
 						} catch (e:Any) {
-							server.dialog.error('KeePassXCEntry action',
-								'Could not load the action "log-in" from actions folder. You can download it from https://github.com/ideckia/action_log-in/releases/tag/v1.0.0');
+							core.dialog.error(Loc.error_title.tr(), Loc.error_body.tr());
 						}
 					}
 				});
@@ -122,17 +120,15 @@ class KeePassXCEntry extends IdeckiaAction {
 				return;
 			}
 
-			server.dialog.password('KeePassXCEntry [${haxe.io.Path.withoutDirectory(props.database_path)}] file password',
-				'Write the KeePassXC [${props.database_path}] file password, please')
-				.then(resp -> {
-					switch resp {
-						case Some(v):
-							cached_keepassxc_password.set(props.database_path, v.password);
-							resolve(v.password);
-						case None:
-							reject('No password provided');
-					}
-				});
+			core.dialog.password(Loc.write_password_title.tr(), Loc.write_password_body.tr([props.database_path])).then(resp -> {
+				switch resp {
+					case Some(v):
+						cached_keepassxc_password.set(props.database_path, v.password);
+						resolve(v.password);
+					case None:
+						reject('No password provided');
+				}
+			});
 		});
 	}
 }
